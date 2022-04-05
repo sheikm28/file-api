@@ -1,0 +1,195 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: File API
+
+paths:
+  /files:
+    post:
+      summary: Upload File
+      description: Upload File
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  format: binary
+                source:
+                  type: string
+                meta:
+                  type: string
+                expireTime:
+                  type: string
+      responses:
+        '200':
+          description: File uploaded and token for the file is returned
+          content:
+            application/json:
+              examples:
+                '0':
+                  value: '{"data":{"token": "454c36e2-2bb1-49b9-84eb-0a1de6d5a58b"},"errors":null,"status":200}'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code: { }
+                        message:
+                          type: string
+                  status:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"data":null,"errors":[{"message":"File should not be empty","code":null}],"status":400}
+  /file/{token}:
+    get:
+      summary: Download File
+      description: Request and download the file using token
+      responses:
+        '200':
+          description: File successfully returned
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code: { }
+                        message:
+                          type: string
+                  status:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"data":null,"errors":[{"message":"File not found for the
+                    token
+                    454c36e2-2bb1-49b9-84eb-0a1de6d5a5","code":null}],"status":404}
+    delete:
+      summary: Delete File
+      description: Delete a file using the Token
+      responses:
+        '200':
+          description: File Successfully Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                  errors: { }
+                  status:
+                    type: integer
+              examples:
+                '0':
+                  value: '{"data":true,"errors":null,"status":200}'
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code: { }
+                        message:
+                          type: string
+                  status:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"data":null,"errors":[{"message":"File not found for the
+                    token
+                    454c36e2-2bb1-49b9-84eb-0a1de6d5a5","code":null}],"status":404}
+  /files/metas:
+    post:
+      summary: Get File Metadata
+      description: Get file meta data for the tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tokens:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              '0':
+                value: "{\"tokens\":\r\n[\r\n     \"454c36e2-2bb1-49b9-84eb-0a1de6d5a58b\"\r\n]\r\n}\r\n"
+              '1':
+                value: "{\"tokens\":\r\n[\r\n     \r\n]\r\n}\r\n"
+      responses:
+        '200':
+          description: File Meta data is returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: string
+                  errors: { }
+                  status:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"data":[{"token":"454c36e2-2bb1-49b9-84eb-0a1de6d5a58b","size":88241,"source":"HRB","meta":{"creatorEmployeeId":"john"},"expireTime":"2022-05-29T15:00:35.000+00:00","fileName":"john_sony_bill.pdf","contentType":"application/pdf","createTime":"2022-04-04T12:31:42.397+00:00"}],"errors":null,"status":200}
+                '1':
+                  value: '{"data":[],"errors":null,"status":200}'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code: { }
+                        message:
+                          type: string
+                  status:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"data":null,"errors":[{"message":"tokens: must not be
+                    empty","code":null}],"status":400}
+
+security:
+  - basicAuth: [ ]
